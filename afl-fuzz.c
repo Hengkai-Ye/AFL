@@ -1488,7 +1488,7 @@ static void read_testcases(void) {
 
     /* This also takes care of . and .. */
 
-    if (!S_ISREG(st.st_mode) || !st.st_size || strstr(fn, "/README.testcases")) {
+    if (!S_ISREG(st.st_mode) || !st.st_size || strstr(fn, "/README.txt")) {
 
       ck_free(fn);
       ck_free(dfn);
@@ -5160,13 +5160,12 @@ static u8 fuzz_one(char** argv) {
   /*********************************************
    * SIMPLE BITFLIP (+dictionary construction) *
    *********************************************/
-
+bit_flip_inst:
 #define FLIP_BIT(_ar, _b) do { \
     u8* _arf = (u8*)(_ar); \
     u32 _bf = (_b); \
     _arf[(_bf) >> 3] ^= (128 >> ((_bf) & 7)); \
   } while (0)
-
   /* Single walking bit. */
 
   stage_short = "flip1";
@@ -5487,7 +5486,7 @@ static u8 fuzz_one(char** argv) {
   stage_cycles[STAGE_FLIP32] += stage_max;
 
 skip_bitflip:
-
+  goto skip_arith;
   if (no_arith) goto skip_arith;
 
   /**********************
@@ -5745,7 +5744,7 @@ skip_bitflip:
   stage_cycles[STAGE_ARITH32] += stage_max;
 
 skip_arith:
-
+  goto skip_interest;
   /**********************
    * INTERESTING VALUES *
    **********************/
@@ -5939,7 +5938,7 @@ skip_arith:
   stage_cycles[STAGE_INTEREST32] += stage_max;
 
 skip_interest:
-
+  goto skip_user_extras;
   /********************
    * DICTIONARY STUFF *
    ********************/
@@ -6054,7 +6053,7 @@ skip_interest:
   stage_cycles[STAGE_EXTRAS_UI] += stage_max;
 
 skip_user_extras:
-
+  goto skip_extras;
   if (!a_extras_cnt) goto skip_extras;
 
   stage_name  = "auto extras (over)";
@@ -6117,7 +6116,7 @@ skip_extras:
    ****************/
 
 havoc_stage:
-
+  //goto bit_flip_inst;
   stage_cur_byte = -1;
 
   /* The havoc stage mutation code is also invoked when splicing files; if the
@@ -8002,7 +8001,7 @@ int main(int argc, char** argv) {
     if (qemu_mode)  FATAL("-Q and -n are mutually exclusive");
 
   }
-
+  //no_arith = 1;
   if (getenv("AFL_NO_FORKSRV"))    no_forkserver    = 1;
   if (getenv("AFL_NO_CPU_RED"))    no_cpu_meter_red = 1;
   if (getenv("AFL_NO_ARITH"))      no_arith         = 1;
