@@ -6,7 +6,7 @@ from subprocess import *
 def isInterest():
     target_str = "2 favored,"
     my_stdout = open("./stdout.txt", "w")
-    p = Popen(['../afl-fuzz', '-i', '../input', '-o', '../output', '../fuzz-file/demo3'], stdout=my_stdout)
+    p = Popen(['../afl-fuzz', '-i', '../input', '-o', '../output', '../fuzz-file/demo1'], stdout=my_stdout)
     time.sleep(0.5)
     p.kill()
     my_stdout.close()
@@ -20,8 +20,10 @@ def main():
     chain_path = "./chain2/"
     new_chain_path = "./chain1/"
     input = "../input/"
+    anls_rs = open("./analysis_result.txt", "w")
     output_files = os.listdir(chain_path)
     output_files.sort()
+    anls_rs.write("Yes-")
     i = 0
     j = 1
     shutil.copyfile(chain_path + output_files[i], new_chain_path + output_files[i])
@@ -33,12 +35,12 @@ def main():
         flag = isInterest()
         if(flag):
             shutil.copyfile(chain_path + output_files[j], new_chain_path + output_files[j])
-            print("Yes")
+            anls_rs.write("Yes-")
             i += 1
             j += 1
         else:
             j += 1
-            print("NO")
+            anls_rs.write("NO-")
 
 if __name__ == '__main__':
     main()

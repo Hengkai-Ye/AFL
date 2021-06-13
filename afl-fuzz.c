@@ -5148,19 +5148,21 @@ static u8 fuzz_one(char** argv) {
 
   if (skip_deterministic || queue_cur->was_fuzzed || queue_cur->passed_det)
     goto havoc_stage;
+    //goto bitflip_instr;
 
   /* Skip deterministic fuzzing if exec path checksum puts this out of scope
      for this master instance. */
 
   if (master_max && (queue_cur->exec_cksum % master_max) != master_id - 1)
     goto havoc_stage;
+    //goto bitflip_instr;
 
   doing_det = 1;
 
   /*********************************************
    * SIMPLE BITFLIP (+dictionary construction) *
    *********************************************/
-bit_flip_inst:
+bitflip_instr:
 #define FLIP_BIT(_ar, _b) do { \
     u8* _arf = (u8*)(_ar); \
     u32 _bf = (_b); \
@@ -5484,8 +5486,8 @@ bit_flip_inst:
 
   stage_finds[STAGE_FLIP32]  += new_hit_cnt - orig_hit_cnt;
   stage_cycles[STAGE_FLIP32] += stage_max;
-
 skip_bitflip:
+  //goto abandon_entry;
   goto skip_arith;
   if (no_arith) goto skip_arith;
 
@@ -6116,7 +6118,7 @@ skip_extras:
    ****************/
 
 havoc_stage:
-  //goto bit_flip_inst;
+  //goto abandon_entry;
   stage_cur_byte = -1;
 
   /* The havoc stage mutation code is also invoked when splicing files; if the

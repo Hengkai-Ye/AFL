@@ -1,6 +1,6 @@
-start_time        : 1623513002
-last_update       : 1623513002
-fuzzer_pid        : 3804752
+start_time        : 1623573036
+last_update       : 1623573036
+fuzzer_pid        : 441050
 cycles_done       : 0
 execs_done        : 16
 execs_per_sec     : 5333.33
@@ -14,7 +14,7 @@ pending_favs      : 1
 pending_total     : 2
 variable_paths    : 0
 stability         : 100.00%
-bitmap_cvg        : 0.01%
+bitmap_cvg        : 0.00%
 unique_crashes    : 0
 unique_hangs      : 0
 last_path         : 0
@@ -22,9 +22,9 @@ last_crash        : 0
 last_hang         : 0
 execs_since_crash : 16
 exec_timeout      : 20
-afl_banner        : demo3
+afl_banner        : demo1
 afl_version       : 2.57b
 target_mode       : default
-command_line      : ../afl-fuzz -i ../input -o ../output ../fuzz-file/demo3
-slowest_exec_ms   : 1
+command_line      : ../afl-fuzz -i ../input -o ../output ../fuzz-file/demo1
+slowest_exec_ms   : 0
 peak_rss_mb       : not available while afl is running
