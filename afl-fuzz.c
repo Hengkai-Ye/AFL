@@ -136,7 +136,8 @@ EXP_ST u8  skip_deterministic,        /* Skip deterministic stages?       */
            run_over10m,               /* Run time over 10 minutes?        */
            persistent_mode,           /* Running in persistent mode?      */
            deferred_mode,             /* Deferred forkserver mode?        */
-           fast_cal;                  /* Try to calibrate faster?         */
+           fast_cal,                  /* Try to calibrate faster?         */
+           dry_mode;                  /* Only run perform_dry_run -Hengkai*/
 
 static s32 out_fd,                    /* Persistent fd for out_file       */
            dev_urandom_fd = -1,       /* Persistent fd for /dev/urandom   */
@@ -7789,7 +7790,7 @@ int main(int argc, char** argv) {
   gettimeofday(&tv, &tz);
   srandom(tv.tv_sec ^ tv.tv_usec ^ getpid());
 
-  while ((opt = getopt(argc, argv, "+i:o:f:m:b:t:T:dnCB:S:M:x:QV")) > 0)
+  while ((opt = getopt(argc, argv, "+i:o:f:m:b:t:T:dnCB:S:M:x:QV:r")) > 0)
 
     switch (opt) {
 
@@ -7973,6 +7974,10 @@ int main(int argc, char** argv) {
 
         /* Version number has been printed already, just quit. */
         exit(0);
+      
+      case 'r': /* Set dry_mode -Hengkai */
+        dry_mode = 1;
+        break;
 
       default:
 
@@ -8062,7 +8067,8 @@ int main(int argc, char** argv) {
     use_argv = argv + optind;
 
   perform_dry_run(use_argv);
-
+  if (dry_mode)
+    exit(0);
   cull_queue();
 
   show_init_stats();
