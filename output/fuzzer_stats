@@ -1,15 +1,15 @@
-start_time        : 1623836431
-last_update       : 1623836433
-fuzzer_pid        : 1719230
-cycles_done       : 4
-execs_done        : 13030
-execs_per_sec     : 4571.43
-paths_total       : 4
-paths_favored     : 1
-paths_found       : 0
+start_time        : 1623857553
+last_update       : 1623857569
+fuzzer_pid        : 2872733
+cycles_done       : 163
+execs_done        : 118254
+execs_per_sec     : 2000.00
+paths_total       : 5
+paths_favored     : 5
+paths_found       : 4
 paths_imported    : 0
-max_depth         : 4
-cur_path          : 0
+max_depth         : 5
+cur_path          : 4
 pending_favs      : 0
 pending_total     : 0
 variable_paths    : 0
@@ -17,14 +17,14 @@ stability         : 100.00%
 bitmap_cvg        : 0.00%
 unique_crashes    : 0
 unique_hangs      : 0
-last_path         : 0
+last_path         : 1623857564
 last_crash        : 0
 last_hang         : 0
-execs_since_crash : 13030
+execs_since_crash : 118254
 exec_timeout      : 20
-afl_banner        : demo1
+afl_banner        : demo2
 afl_version       : 2.57b
 target_mode       : default
-command_line      : ./afl-fuzz -i ./input -o ./output ./fuzz-file/demo1
-slowest_exec_ms   : 1
+command_line      : ./afl-fuzz -i ./input -o ./output ./fuzz-file/demo2
+slowest_exec_ms   : 3
 peak_rss_mb       : 1

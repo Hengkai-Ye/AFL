@@ -2755,7 +2755,7 @@ static void perform_dry_run(char** argv) {
 
     u8* fn = strrchr(q->fname, '/') + 1;
 
-    ACTF("Attempting dry run with '%s'...", fn);
+    //ACTF("Attempting dry run with '%s'...", fn);
 
     fd = open(q->fname, O_RDONLY);
     if (fd < 0) PFATAL("Unable to open '%s'", q->fname);
@@ -2771,11 +2771,11 @@ static void perform_dry_run(char** argv) {
     ck_free(use_mem);
 
     if (stop_soon) return;
-
+    /*
     if (res == crash_mode || res == FAULT_NOBITS)
       SAYF(cGRA "    len = %u, map size = %u, exec speed = %llu us\n" cRST, 
            q->len, q->bitmap_size, q->exec_us);
-
+    */
     switch (res) {
 
       case FAULT_NONE:
@@ -2909,14 +2909,15 @@ static void perform_dry_run(char** argv) {
       case FAULT_NOBITS: 
 
         useless_at_start++;
-
+/*
         if (!in_bitmap && !shuffle_queue)
           WARNF("No new instrumentation output, test case may be useless.");
-
+*/
+        if (!in_bitmap && !shuffle_queue)
+          printf("%s:no-new-path\n", fn);
         break;
-
     }
-
+    
     if (q->var_behavior) WARNF("Instrumentation output varies across runs.");
 
     q = q->next;
@@ -2938,7 +2939,7 @@ static void perform_dry_run(char** argv) {
 
   }
 
-  OKF("All test cases processed.");
+  //OKF("All test cases processed.");
 
 }
 
