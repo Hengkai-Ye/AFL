@@ -2745,6 +2745,7 @@ static void perform_dry_run(char** argv) {
 
   struct queue_entry* q = queue;
   u32 cal_failures = 0;
+  u32 chain_index = 0;
   u8* skip_crashes = getenv("AFL_SKIP_CRASHES");
 
   while (q) {
@@ -2914,14 +2915,15 @@ static void perform_dry_run(char** argv) {
           WARNF("No new instrumentation output, test case may be useless.");
 */
         if (!in_bitmap && !shuffle_queue)
-          printf("%s:no-new-path\n", fn);
+          //printf("%s:no-new-path\n", fn);
+          printf("%d:no-new-path\n", chain_index);
         break;
     }
-    
+
     if (q->var_behavior) WARNF("Instrumentation output varies across runs.");
 
     q = q->next;
-
+    chain_index++;
   }
 
   if (cal_failures) {
