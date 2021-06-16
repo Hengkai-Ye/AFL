@@ -8,7 +8,7 @@ int main(int argc, char *argv[]){
     scanf("%x", &magicbytes);
     if(magicbytes == 0xdeadbeef){
         printf("got it\n");
-        strcpy(buffer, argv[1]);//buffer overflow
+        //strcpy(buffer, argv[1]);//buffer overflow
     }else{
         printf("fail\n");
     }

@@ -5,14 +5,17 @@ from subprocess import *
 
 def isInterest():
     target_str = "2 favored,"
+    target_str_2 = "Oops"
     my_stdout = open("./stdout.txt", "w")
-    p = Popen(['../afl-fuzz', '-i', '../input', '-o', '../output', '../fuzz-file/demo1'], stdout=my_stdout)
+    p = Popen(['../afl-fuzz', '-i', '../input', '-o', '../output', '../fuzz-file/demo3'], stdout=my_stdout)
     time.sleep(0.5)
     p.kill()
     my_stdout.close()
     my_stdout = open("./stdout.txt", "r")
     for line in my_stdout:
         if target_str in line:
+            return 1 #interest file
+        if target_str_2 in line:
             return 1 #interest file
     return 0 #non-interest file
 

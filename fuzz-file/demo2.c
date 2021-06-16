@@ -11,7 +11,7 @@ int main(int argc, char *argv[]){
             if((magicbytes & 0xff00) >> 8 == 0xbe){
                 if((magicbytes & 0xff) == 0xef){
                     printf("got it\n");
-                    strcpy(buffer, argv[1]);
+                    //strcpy(buffer, argv[1]);
                     return 1;
                 }
             }

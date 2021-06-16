@@ -5162,7 +5162,6 @@ static u8 fuzz_one(char** argv) {
   /*********************************************
    * SIMPLE BITFLIP (+dictionary construction) *
    *********************************************/
-bitflip_instr:
 #define FLIP_BIT(_ar, _b) do { \
     u8* _arf = (u8*)(_ar); \
     u32 _bf = (_b); \
@@ -5487,8 +5486,6 @@ bitflip_instr:
   stage_finds[STAGE_FLIP32]  += new_hit_cnt - orig_hit_cnt;
   stage_cycles[STAGE_FLIP32] += stage_max;
 skip_bitflip:
-  //goto abandon_entry;
-  goto skip_arith;
   if (no_arith) goto skip_arith;
 
   /**********************
@@ -5746,7 +5743,6 @@ skip_bitflip:
   stage_cycles[STAGE_ARITH32] += stage_max;
 
 skip_arith:
-  goto skip_interest;
   /**********************
    * INTERESTING VALUES *
    **********************/
@@ -5940,7 +5936,6 @@ skip_arith:
   stage_cycles[STAGE_INTEREST32] += stage_max;
 
 skip_interest:
-  goto skip_user_extras;
   /********************
    * DICTIONARY STUFF *
    ********************/
@@ -6055,7 +6050,6 @@ skip_interest:
   stage_cycles[STAGE_EXTRAS_UI] += stage_max;
 
 skip_user_extras:
-  goto skip_extras;
   if (!a_extras_cnt) goto skip_extras;
 
   stage_name  = "auto extras (over)";
@@ -6118,7 +6112,6 @@ skip_extras:
    ****************/
 
 havoc_stage:
-  //goto abandon_entry;
   stage_cur_byte = -1;
 
   /* The havoc stage mutation code is also invoked when splicing files; if the

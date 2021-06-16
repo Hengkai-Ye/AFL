@@ -1,7 +1,7 @@
 [0;36mafl-fuzz [1;97m2.57b[0m by <lcamtuf@google.com>
 [1;92m[+] [0mLooks like we're not running on a tty, so I'll be a bit less verbose.[0m
-[1;92m[+] [0mYou have 4 CPU cores and 9 runnable tasks (utilization: 225%).[0m
-[1;93m[!] [1;97mWARNING: [0mSystem under apparent load, performance may be spotty.[0m
+[1;92m[+] [0mYou have 4 CPU cores and 2 runnable tasks (utilization: 50%).[0m
+[1;92m[+] [0mTry parallel jobs - see /usr/local/share/doc/afl/parallel_fuzzing.txt.[0m
 [1;94m[*] [0mChecking CPU core loadout...[0m
 [1;92m[+] [0mFound a free CPU core, binding to #0.[0m
 [1;94m[*] [0mChecking core_pattern...[0m
@@ -13,23 +13,33 @@
 [1;92m[+] [0mNo auto-generated dictionary tokens to reuse.[0m
 [1;94m[*] [0mCreating hard links for all input files...[0m
 [1;94m[*] [0mValidating target binary...[0m
-[1;94m[*] [0mAttempting dry run with 'id:000000,orig:input'...[0m
+[1;94m[*] [0mAttempting dry run with 'id:000000,orig:id:000002,src:000001,op:havoc,rep:4,+cov'...[0m
 [1;94m[*] [0mSpinning up the fork server...[0m
 [1;92m[+] [0mAll right - fork server is up.[0m
-[1;90m    len = 2, map size = 3, exec speed = 161 us
-[0m[1;94m[*] [0mAttempting dry run with 'id:000001,orig:id:000003,src:000002,op:havoc,rep:16,+cov'...[0m
-[1;90m    len = 12, map size = 3, exec speed = 134 us
-[0m[1;93m[!] [1;97mWARNING: [0mNo new instrumentation output, test case may be useless.[0m
-[1;92m[+] [0mAll test cases processed.[0m
+[1;90m    len = 8, map size = 5, exec speed = 175 us
+[0m[1;94m[*] [0mAttempting dry run with 'id:000001,orig:id:999999,sig:11,src:000003,op:flip2,pos:7'...[0m
 
-[1;92m[+] [0mHere are some useful stats:
+[1;91m[-] [0mOops, the program crashed with one of the test cases provided. There are
+    several possible explanations:
 
-[1;90m    Test case count : [0m1 favored, 0 variable, 2 total
-[1;90m       Bitmap range : [0m3 to 3 bits (average: 3.00 bits)
-[1;90m        Exec timing : [0m134 to 161 us (average: 148 us)
-[0m
-[1;94m[*] [0mNo -t option specified, so I'll use exec timeout of 20 ms.[0m
-[1;92m[+] [0mAll set and ready to roll![0m
-[1;94m[*] [0mEntering queue cycle 1.[0m
-[1;94m[*] [0mFuzzing test case #0 (2 total, 0 uniq crashes found)...[0m
-[1;94m[*] [0mFuzzing test case #1 (2 total, 0 uniq crashes found)...[0m
+    - The test case causes known crashes under normal working conditions. If
+      so, please remove it. The fuzzer should be seeded with interesting
+      inputs - but not ones that cause an outright crash.
+
+    - The current memory limit (50.0 MB) is too low for this program, causing
+      it to die due to OOM when parsing valid files. To fix this, try
+      bumping it up with the -m setting in the command line. If in doubt,
+      try something along the lines of:
+
+      ( ulimit -Sv $[49 << 10]; /path/to/binary [...] <testcase )
+
+      Tip: you can use http://jwilk.net/software/recidivm to quickly
+      estimate the required amount of virtual memory for the binary. Also,
+      if you are using ASAN, see /usr/local/share/doc/afl/notes_for_asan.txt.
+
+    - Least likely, there is a horrible bug in the fuzzer. If other options
+      fail, poke <lcamtuf@coredump.cx> for troubleshooting tips.
+)B[?25h[0m[1;91m
+[-] PROGRAM ABORT : [1;97mTest case 'id:000001,orig:id:999999,sig:11,src:000003,op:flip2,pos:7' results in a crash[1;91m
+         Location : [0mperform_dry_run(), afl-fuzz.c:2898
+

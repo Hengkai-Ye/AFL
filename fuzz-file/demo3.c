@@ -10,7 +10,7 @@ int main(int argc, char *argv[]){
         if((magicbytes & 0xff0000) >> 16 == 0xad){
             if(magicbytes == 0xdeadbeef){
                 printf("got it\n");
-                strcpy(buffer, argv[1]);
+                //strcpy(buffer, argv[1]);
                 return 1;
             }
         }
