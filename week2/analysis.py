@@ -5,9 +5,8 @@ import argparse
 from subprocess import *
 op_path = "../output/queue/"
 ip_path = "../input/"
-chain_path = "./chain/"
 
-def fuzz_one(prog, t): #fuzz one program and generate a chain
+def fuzz_one(prog, t, chain_path): #fuzz one program and generate a chain
     shutil.rmtree(chain_path)
     os.mkdir(chain_path)
     p = Popen(['../afl-fuzz', '-i', '../input', '-o', '../output', prog])
@@ -26,7 +25,7 @@ def fuzz_one(prog, t): #fuzz one program and generate a chain
                 break
     shutil.copyfile(op_path+chain_ele, chain_path+chain_ele)
 
-def comparision(prog, result):
+def comparision(prog, result, chain_path):
     target_str = "no-new-path"
     my_result = open(result, "a")
     ip_files = os.listdir(chain_path)
@@ -62,6 +61,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-prog1', type=str, default='../fuzz-file/demo2', help='path to first program')
     parser.add_argument('-prog2', type=str, default='../fuzz-file/demo3', help='path to second program')
+    parser.add_argument('-chain1', type=str, default='./chain1/', help='path to chain of first program')
+    parser.add_argument('-chain2', type=str, default='./chain2/', help='path to chain of second program')
     parser.add_argument('-t', type=int, default=5, help='how many minutes to fuzz')
     parser.add_argument('-s', type=str, default='./input_seed', help='input_seed')
     parser.add_argument('-r', type=str, default='./result', help='result')
@@ -71,15 +72,15 @@ def main():
     my_result.write("Performance of Chain from Program1\n")
     my_result.close()
     refresh_input(args.s)
-    fuzz_one(args.prog1, args.t)
-    comparision(args.prog2, args.r)
+    fuzz_one(args.prog1, args.t, args.chain1)
+    comparision(args.prog2, args.r, args.chain1)
 
     my_result = open(args.r, "a")
     my_result.write("Performance of Chain from Program2\n")
     my_result.close()
     refresh_input(args.s)
-    fuzz_one(args.prog2, args.t)
-    comparision(args.prog1, args.r)
+    fuzz_one(args.prog2, args.t, args.chain2)
+    comparision(args.prog1, args.r, args.chain2)
     
 
 
