@@ -1,6 +1,6 @@
 [0;36mafl-fuzz [1;97m2.57b[0m by <lcamtuf@google.com>
 [1;92m[+] [0mLooks like we're not running on a tty, so I'll be a bit less verbose.[0m
-[1;92m[+] [0mYou have 4 CPU cores and 2 runnable tasks (utilization: 50%).[0m
+[1;92m[+] [0mYou have 4 CPU cores and 3 runnable tasks (utilization: 75%).[0m
 [1;92m[+] [0mTry parallel jobs - see /usr/local/share/doc/afl/parallel_fuzzing.txt.[0m
 [1;94m[*] [0mChecking CPU core loadout...[0m
 [1;92m[+] [0mFound a free CPU core, binding to #0.[0m
@@ -15,3 +15,6 @@
 [1;94m[*] [0mValidating target binary...[0m
 [1;94m[*] [0mSpinning up the fork server...[0m
 [1;92m[+] [0mAll right - fork server is up.[0m
+1:no-new-path
+2:no-new-path
+3:no-new-path

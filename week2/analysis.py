@@ -35,10 +35,10 @@ def comparision(prog, result, chain_path):
     os.mkdir(ip_path)
     for ip_file in ip_files:
         shutil.copyfile(chain_path+ip_file, ip_path+ip_file)
-    my_stdout = open("./stdout.txt", "w")
+    my_stdout = open("./stdout", "w")
     call(['../afl-fuzz', '-r', '-i', '../input', '-o', '../output', prog], stdout=my_stdout)
     my_stdout.close()
-    my_stdout = open("./stdout.txt", "r")
+    my_stdout = open("./stdout", "r")
     for line in my_stdout:
         if target_str in line:
             index_record.append(int(line.split(':')[0]))
@@ -59,8 +59,8 @@ def refresh_input(ip_seed):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-prog1', type=str, default='../fuzz-file/demo2', help='path to first program')
-    parser.add_argument('-prog2', type=str, default='../fuzz-file/demo3', help='path to second program')
+    parser.add_argument('-prog1', type=str, default='../fuzz-file/demo1', help='path to first program')
+    parser.add_argument('-prog2', type=str, default='../fuzz-file/demo2', help='path to second program')
     parser.add_argument('-chain1', type=str, default='./chain1/', help='path to chain of first program')
     parser.add_argument('-chain2', type=str, default='./chain2/', help='path to chain of second program')
     parser.add_argument('-t', type=int, default=5, help='how many minutes to fuzz')
@@ -69,14 +69,14 @@ def main():
     args = parser.parse_args()
 
     my_result = open(args.r, "w")
-    my_result.write("Performance of Chain from Program1\n")
+    my_result.write("Performance of Chain1 in Program2\n")
     my_result.close()
     refresh_input(args.s)
     fuzz_one(args.prog1, args.t, args.chain1)
     comparision(args.prog2, args.r, args.chain1)
 
     my_result = open(args.r, "a")
-    my_result.write("Performance of Chain from Program2\n")
+    my_result.write("Performance of Chain2 in Program1\n")
     my_result.close()
     refresh_input(args.s)
     fuzz_one(args.prog2, args.t, args.chain2)
