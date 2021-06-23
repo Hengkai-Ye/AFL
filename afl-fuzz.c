@@ -924,7 +924,6 @@ static inline u8 has_new_bits(u8* virgin_map) {
 #endif /* ^WORD_SIZE_64 */
 
   u8   ret = 0;
-
   while (i--) {
 
     /* Optimize for (*current & *virgin) == 0 - i.e., no bits in current bitmap
@@ -942,13 +941,51 @@ static inline u8 has_new_bits(u8* virgin_map) {
            bytes in current[] are pristine in virgin[]. */
 
 #ifdef WORD_SIZE_64
-
+/*
         if ((cur[0] && vir[0] == 0xff) || (cur[1] && vir[1] == 0xff) ||
             (cur[2] && vir[2] == 0xff) || (cur[3] && vir[3] == 0xff) ||
             (cur[4] && vir[4] == 0xff) || (cur[5] && vir[5] == 0xff) ||
             (cur[6] && vir[6] == 0xff) || (cur[7] && vir[7] == 0xff)) ret = 2;
         else ret = 1;
-
+*/
+        if ((cur[0] && vir[0] == 0xff) || (cur[1] && vir[1] == 0xff) ||
+            (cur[2] && vir[2] == 0xff) || (cur[3] && vir[3] == 0xff) ||
+            (cur[4] && vir[4] == 0xff) || (cur[5] && vir[5] == 0xff) ||
+            (cur[6] && vir[6] == 0xff) || (cur[7] && vir[7] == 0xff)) {
+          if(cur[0] && vir[0] == 0xff){
+            printf("%d:%d:new-branch\n", 0, 65536 - i*8 - 8);
+            ret = 2;
+          }
+          else if(cur[1] && vir[1] == 0xff){
+            printf("%d:%d:new-branch\n", 1, 65536 - i*8 + 1 - 8);
+            ret = 2;
+          }
+          else if(cur[2] && vir[2] == 0xff){
+            printf("%d:%d:new-branch\n", 2, 65536 - i*8 + 2 - 8);
+            ret = 2;
+          }
+          else if(cur[3] && vir[3] == 0xff){
+            printf("%d:%d:new-branch\n", 3, 65536 - i*8 + 3 - 8);
+            ret = 2;
+          }
+          else if(cur[4] && vir[4] == 0xff){
+            printf("%d:%d:new-branch\n", 4, 65536 - i*8 + 4 - 8);
+            ret = 2;
+          }
+          else if(cur[5] && vir[5] == 0xff){
+            printf("%d:%d:new-branch\n", 5, 65536 - i*8 + 5 - 8);
+            ret = 2;
+          }
+          else if(cur[6] && vir[6] == 0xff){
+            printf("%d:%d:new-branch\n", 6, 65536 - i*8 + 6 - 8);
+            ret = 2;
+          }
+          else if(cur[7] && vir[7] == 0xff){
+            printf("%d:%d:new-branch\n", 7, 65536 - i*8 + 7 - 8);
+            ret = 2;
+          }              
+        }
+        else ret = 1;
 #else
 
         if ((cur[0] && vir[0] == 0xff) || (cur[1] && vir[1] == 0xff) ||
