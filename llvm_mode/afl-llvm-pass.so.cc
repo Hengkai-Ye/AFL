@@ -44,6 +44,7 @@
 #include "llvm/IR/Module.h"
 #include "llvm/Support/Debug.h"
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
+#include "llvm/Support/raw_ostream.h"
 
 using namespace llvm;
 
@@ -115,10 +116,14 @@ bool AFLCoverage::runOnModule(Module &M) {
 
   int inst_blocks = 0;
 
-  for (auto &F : M)
+  for (auto &F : M){
+    //errs() << "Function:";
+    //errs().write_escaped(F.getName()) << '\n';
     for (auto &BB : F) {
 
       BasicBlock::iterator IP = BB.getFirstInsertionPt();
+      //errs() << "BasicBlock:";
+      //errs().write_escaped(BB.getName()) << '\n';
       IRBuilder<> IRB(&(*IP));
 
       if (AFL_R(100) >= inst_ratio) continue;
@@ -134,13 +139,16 @@ bool AFLCoverage::runOnModule(Module &M) {
       LoadInst *PrevLoc = IRB.CreateLoad(AFLPrevLoc);
       PrevLoc->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
       Value *PrevLocCasted = IRB.CreateZExt(PrevLoc, IRB.getInt32Ty());
-
       /* Load SHM pointer */
 
       LoadInst *MapPtr = IRB.CreateLoad(AFLMapPtr);
       MapPtr->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
       Value *MapPtrIdx =
           IRB.CreateGEP(MapPtr, IRB.CreateXor(PrevLocCasted, CurLoc));
+
+      /* Get BB id and its cur_loc */
+      BB.printAsOperand(errs(), false);
+      errs()<<":"<<cur_loc<<"\n";
 
       /* Update bitmap */
 
@@ -159,7 +167,7 @@ bool AFLCoverage::runOnModule(Module &M) {
       inst_blocks++;
 
     }
-
+  }
   /* Say something nice. */
 
   if (!be_quiet) {
