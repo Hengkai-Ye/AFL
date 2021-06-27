@@ -59,8 +59,8 @@ def refresh_input(ip_seed):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-prog1', type=str, default='../fuzz-file/demo1', help='path to first program')
-    parser.add_argument('-prog2', type=str, default='../fuzz-file/demo2', help='path to second program')
+    parser.add_argument('-prog1', type=str, default='./source-code/demo1', help='path to first program')
+    parser.add_argument('-prog2', type=str, default='./source-code/demo2', help='path to second program')
     parser.add_argument('-chain1', type=str, default='./chain1/', help='path to chain of first program')
     parser.add_argument('-chain2', type=str, default='./chain2/', help='path to chain of second program')
     parser.add_argument('-t', type=int, default=5, help='how many minutes to fuzz')

@@ -134,6 +134,15 @@ bool AFLCoverage::runOnModule(Module &M) {
 
       ConstantInt *CurLoc = ConstantInt::get(Int32Ty, cur_loc);
 
+      /* Get BB id and its cur_loc & print BBinfo*/
+      BB.printAsOperand(errs(), false);
+      errs()<<":"<<cur_loc<<"\n";
+      BasicBlock* BBinfo = &BB;
+      for(BasicBlock::iterator i = BBinfo->begin(), e = BBinfo->end(); i!=e; ++i){
+        Instruction* ii = &*i;
+        errs() << *ii << "\n";
+      }
+
       /* Load prev_loc */
 
       LoadInst *PrevLoc = IRB.CreateLoad(AFLPrevLoc);
@@ -145,10 +154,6 @@ bool AFLCoverage::runOnModule(Module &M) {
       MapPtr->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
       Value *MapPtrIdx =
           IRB.CreateGEP(MapPtr, IRB.CreateXor(PrevLocCasted, CurLoc));
-
-      /* Get BB id and its cur_loc */
-      BB.printAsOperand(errs(), false);
-      errs()<<":"<<cur_loc<<"\n";
 
       /* Update bitmap */
 
