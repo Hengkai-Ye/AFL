@@ -38,6 +38,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "llvm/IR/CFG.h"
 #include "llvm/ADT/Statistic.h"
 #include "llvm/IR/IRBuilder.h"
 #include "llvm/IR/LegacyPassManager.h"
@@ -125,7 +126,7 @@ bool AFLCoverage::runOnModule(Module &M) {
       //errs() << "BasicBlock:";
       //errs().write_escaped(BB.getName()) << '\n';
       IRBuilder<> IRB(&(*IP));
-
+      
       if (AFL_R(100) >= inst_ratio) continue;
 
       /* Make up cur_loc */
@@ -133,16 +134,33 @@ bool AFLCoverage::runOnModule(Module &M) {
       unsigned int cur_loc = AFL_R(MAP_SIZE);
 
       ConstantInt *CurLoc = ConstantInt::get(Int32Ty, cur_loc);
-
+    
       /* Get BB id and its cur_loc & print BBinfo*/
-      BB.printAsOperand(errs(), false);
-      errs()<<":"<<cur_loc<<"\n";
+      //BB.printAsOperand(errs(), false);
+      BB.InstValue = cur_loc;
+      errs() << "BB-id:" << BB.InstValue << "\n";
       BasicBlock* BBinfo = &BB;
+
+      unsigned int max_line = 0;
+      std::string filename;
       for(BasicBlock::iterator i = BBinfo->begin(), e = BBinfo->end(); i!=e; ++i){
         Instruction* ii = &*i;
-        errs() << *ii << "\n";
+        //errs() << *ii << "\n"; 
+        const DebugLoc &location = ii->getDebugLoc();
+        if (location){
+          if(max_line < location.getLine()){
+            max_line = location.getLine();
+          }
+        }       
       }
-
+      errs() << "BB-line:" << max_line << "\n";
+      errs() << "BB-pred";
+      for (BasicBlock *Pred : predecessors(BBinfo)){
+        errs() << ":" << Pred->InstValue;
+      }
+      errs()<<"\n\n";
+      
+      
       /* Load prev_loc */
 
       LoadInst *PrevLoc = IRB.CreateLoad(AFLPrevLoc);
