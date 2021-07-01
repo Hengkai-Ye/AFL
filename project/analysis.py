@@ -35,19 +35,19 @@ def comparision(prog, result, chain_path):
     os.mkdir(ip_path)
     for ip_file in ip_files:
         shutil.copyfile(chain_path+ip_file, ip_path+ip_file)
-    my_stdout = open("./stdout", "w")
+    my_stdout = open("./info/stdout", "w")
     call(['../afl-fuzz', '-r', '-i', '../input', '-o', '../output', prog], stdout=my_stdout)
     my_stdout.close()
-    my_stdout = open("./stdout", "r")
+    my_stdout = open("./info/stdout", "r")
     for line in my_stdout:
         if target_str in line:
             index_record.append(int(line.split(':')[0]))
     for i in range(len(ip_files)):
         if i in index_record:
-            my_result.write("No-")
+            my_result.write("N-")
             #print("No-", end='')
         else:
-            my_result.write("Yes-")
+            my_result.write("Y-")
             #print("Yes-", end='')
     my_result.write("\n")
     my_result.close()
@@ -59,13 +59,13 @@ def refresh_input(ip_seed):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-prog1', type=str, default='./source-code/demo1', help='path to first program')
-    parser.add_argument('-prog2', type=str, default='./source-code/demo2', help='path to second program')
+    parser.add_argument('-prog1', type=str, default='./source-code/demo1', help='path to the first program')
+    parser.add_argument('-prog2', type=str, default='./source-code/demo2', help='path to the second program')
     parser.add_argument('-chain1', type=str, default='./chain1/', help='path to chain of first program')
     parser.add_argument('-chain2', type=str, default='./chain2/', help='path to chain of second program')
     parser.add_argument('-t', type=int, default=5, help='how many minutes to fuzz')
-    parser.add_argument('-s', type=str, default='./input_seed', help='input_seed')
-    parser.add_argument('-r', type=str, default='./result', help='result')
+    parser.add_argument('-s', type=str, default='./info/input-seed', help='input-seed')
+    parser.add_argument('-r', type=str, default='./info/result', help='result')
     args = parser.parse_args()
 
     my_result = open(args.r, "w")

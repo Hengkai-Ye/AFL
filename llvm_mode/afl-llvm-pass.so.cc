@@ -162,7 +162,7 @@ bool AFLCoverage::runOnModule(Module &M) {
         unsigned int branch_id = (addr_iv.find((unsigned long)Pred)->second >> 1) xor cur_loc;
         unsigned int src_line = addr_line.find((unsigned long)Pred)->second;
         unsigned int dst_line = addr_line.find((unsigned long)BBinfo)->second;
-        errs() << branch_id << ":" << src_line << ":" << dst_line << "\n";
+        errs() << branch_id << ":" << src_line << ":" << dst_line << ":" << "\n";
         //errs() << addr_line.find((unsigned long)Pred)->second << "\n";
       }
 
