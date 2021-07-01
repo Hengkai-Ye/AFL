@@ -37,6 +37,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <map>
+#include <utility>
 
 #include "llvm/IR/CFG.h"
 #include "llvm/ADT/Statistic.h"
@@ -114,9 +116,10 @@ bool AFLCoverage::runOnModule(Module &M) {
       0, GlobalVariable::GeneralDynamicTLSModel, 0, false);
 
   /* Instrument all the things! */
-
+  std::map<unsigned long, int> addr_iv; // <addr of BB, instvalue>
+  std::map<unsigned long, unsigned int> addr_line; // <addr of BB, line of BB>
   int inst_blocks = 0;
-
+  //errs() << M.getName() << "\n";
   for (auto &F : M){
     //errs() << "Function:";
     //errs().write_escaped(F.getName()) << '\n';
@@ -136,6 +139,34 @@ bool AFLCoverage::runOnModule(Module &M) {
       ConstantInt *CurLoc = ConstantInt::get(Int32Ty, cur_loc);
     
       /* Get BB id and its cur_loc & print BBinfo*/
+      BasicBlock* BBinfo = &BB;
+      //std::pair <unsigned long, int> pair_iv;
+      addr_iv.insert(std::make_pair((unsigned long)&BB, cur_loc));
+
+      unsigned int max_line = 0;
+      std::string filename;
+      for(BasicBlock::iterator i = BBinfo->begin(), e = BBinfo->end(); i!=e; ++i){
+        Instruction* ii = &*i;
+        //errs() << *ii << "\n"; 
+        const DebugLoc &location = ii->getDebugLoc();
+        if (location){
+          if(max_line < location.getLine()){
+            max_line = location.getLine();
+          }
+        }       
+      }
+
+      addr_line.insert(std::make_pair((unsigned long)&BB, max_line));
+
+      for (BasicBlock *Pred : predecessors(BBinfo)){
+        unsigned int branch_id = (addr_iv.find((unsigned long)Pred)->second >> 1) xor cur_loc;
+        unsigned int src_line = addr_line.find((unsigned long)Pred)->second;
+        unsigned int dst_line = addr_line.find((unsigned long)BBinfo)->second;
+        errs() << branch_id << ":" << src_line << ":" << dst_line << "\n";
+        //errs() << addr_line.find((unsigned long)Pred)->second << "\n";
+      }
+
+      /*
       //BB.printAsOperand(errs(), false);
       BB.InstValue = cur_loc;
       errs() << "BB-id:" << BB.InstValue << "\n";
@@ -159,7 +190,7 @@ bool AFLCoverage::runOnModule(Module &M) {
         errs() << ":" << Pred->InstValue;
       }
       errs()<<"\n\n";
-      
+      */
       
       /* Load prev_loc */
 
