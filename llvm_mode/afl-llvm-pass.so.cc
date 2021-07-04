@@ -119,7 +119,6 @@ bool AFLCoverage::runOnModule(Module &M) {
   std::map<unsigned long, int> addr_iv; // <addr of BB, instvalue>
   std::map<unsigned long, unsigned int> addr_line; // <addr of BB, line of BB>
   int inst_blocks = 0;
-  //errs() << M.getName() << "\n";
   for (auto &F : M){
     //errs() << "Function:";
     //errs().write_escaped(F.getName()) << '\n';
@@ -162,7 +161,7 @@ bool AFLCoverage::runOnModule(Module &M) {
         unsigned int branch_id = (addr_iv.find((unsigned long)Pred)->second >> 1) xor cur_loc;
         unsigned int src_line = addr_line.find((unsigned long)Pred)->second;
         unsigned int dst_line = addr_line.find((unsigned long)BBinfo)->second;
-        errs() << branch_id << ":" << src_line << ":" << dst_line << ":" << "\n";
+        errs() << "FLAG:" << branch_id << ":" << src_line << ":" << dst_line << ":" << M.getName() << "\n";
         //errs() << addr_line.find((unsigned long)Pred)->second << "\n";
       }
 

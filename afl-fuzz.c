@@ -953,39 +953,43 @@ static inline u8 has_new_bits(u8* virgin_map) {
             (cur[4] && vir[4] == 0xff) || (cur[5] && vir[5] == 0xff) ||
             (cur[6] && vir[6] == 0xff) || (cur[7] && vir[7] == 0xff)) {
           if(cur[0] && vir[0] == 0xff){
-            printf("%d:%d:new-branch\n", 0, 65536 - i*8 - 8);
+            printf("%d:NB\n", 65536 - i*8 - 8);
             ret = 2;
           }
           else if(cur[1] && vir[1] == 0xff){
-            printf("%d:%d:new-branch\n", 1, 65536 - i*8 + 1 - 8);
+            printf("%d:NB\n", 65536 - i*8 + 1 - 8);
             ret = 2;
           }
           else if(cur[2] && vir[2] == 0xff){
-            printf("%d:%d:new-branch\n", 2, 65536 - i*8 + 2 - 8);
+            printf("%d:NB\n", 65536 - i*8 + 2 - 8);
             ret = 2;
           }
           else if(cur[3] && vir[3] == 0xff){
-            printf("%d:%d:new-branch\n", 3, 65536 - i*8 + 3 - 8);
+            printf("%d:NB\n", 65536 - i*8 + 3 - 8);
             ret = 2;
           }
           else if(cur[4] && vir[4] == 0xff){
-            printf("%d:%d:new-branch\n", 4, 65536 - i*8 + 4 - 8);
+            printf("%d:NB\n", 65536 - i*8 + 4 - 8);
             ret = 2;
           }
           else if(cur[5] && vir[5] == 0xff){
-            printf("%d:%d:new-branch\n", 5, 65536 - i*8 + 5 - 8);
+            printf("%d:NB\n", 65536 - i*8 + 5 - 8);
             ret = 2;
           }
           else if(cur[6] && vir[6] == 0xff){
-            printf("%d:%d:new-branch\n", 6, 65536 - i*8 + 6 - 8);
+            printf("%d:NB\n", 65536 - i*8 + 6 - 8);
             ret = 2;
           }
           else if(cur[7] && vir[7] == 0xff){
-            printf("%d:%d:new-branch\n", 7, 65536 - i*8 + 7 - 8);
+            printf("%d:NB\n", 65536 - i*8 + 7 - 8);
             ret = 2;
           }              
         }
-        else ret = 1;
+        else{
+          //printf("hit-count\n");
+          ret = 1; 
+        }
+        //else ret = 1;
 #else
 
         if ((cur[0] && vir[0] == 0xff) || (cur[1] && vir[1] == 0xff) ||
@@ -2779,20 +2783,18 @@ static void check_map_coverage(void) {
    expected. This is done only for the initial inputs, and only once. */
 
 static void perform_dry_run(char** argv) {
-
   struct queue_entry* q = queue;
   u32 cal_failures = 0;
   u32 chain_index = 0;
   u8* skip_crashes = getenv("AFL_SKIP_CRASHES");
 
   while (q) {
-
     u8* use_mem;
     u8  res;
     s32 fd;
 
     u8* fn = strrchr(q->fname, '/') + 1;
-
+    
     //ACTF("Attempting dry run with '%s'...", fn);
 
     fd = open(q->fname, O_RDONLY);
@@ -2958,7 +2960,6 @@ static void perform_dry_run(char** argv) {
     }
 
     if (q->var_behavior) WARNF("Instrumentation output varies across runs.");
-
     q = q->next;
     chain_index++;
   }
