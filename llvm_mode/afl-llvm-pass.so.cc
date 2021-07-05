@@ -39,7 +39,8 @@
 #include <unistd.h>
 #include <map>
 #include <utility>
-
+#include <fstream>
+#include <iostream>
 #include "llvm/IR/CFG.h"
 #include "llvm/ADT/Statistic.h"
 #include "llvm/IR/IRBuilder.h"
@@ -118,15 +119,15 @@ bool AFLCoverage::runOnModule(Module &M) {
   /* Instrument all the things! */
   std::map<unsigned long, int> addr_iv; // <addr of BB, instvalue>
   std::map<unsigned long, unsigned int> addr_line; // <addr of BB, line of BB>
+  
+  std::ofstream outfile;
+  //outfile.open("/home/hengkai/Desktop/AFL/llvm_mode/trace/"+std::string(M.getName())+".log", std::ios::out);
+  outfile.open("/home/hengkai/Desktop/AFL/llvm_mode/trace.log", std::ios::app);
   int inst_blocks = 0;
   for (auto &F : M){
-    //errs() << "Function:";
-    //errs().write_escaped(F.getName()) << '\n';
     for (auto &BB : F) {
 
       BasicBlock::iterator IP = BB.getFirstInsertionPt();
-      //errs() << "BasicBlock:";
-      //errs().write_escaped(BB.getName()) << '\n';
       IRBuilder<> IRB(&(*IP));
       
       if (AFL_R(100) >= inst_ratio) continue;
@@ -139,14 +140,12 @@ bool AFLCoverage::runOnModule(Module &M) {
     
       /* Get BB id and its cur_loc & print BBinfo*/
       BasicBlock* BBinfo = &BB;
-      //std::pair <unsigned long, int> pair_iv;
       addr_iv.insert(std::make_pair((unsigned long)&BB, cur_loc));
 
       unsigned int max_line = 0;
       std::string filename;
       for(BasicBlock::iterator i = BBinfo->begin(), e = BBinfo->end(); i!=e; ++i){
         Instruction* ii = &*i;
-        //errs() << *ii << "\n"; 
         const DebugLoc &location = ii->getDebugLoc();
         if (location){
           if(max_line < location.getLine()){
@@ -162,8 +161,10 @@ bool AFLCoverage::runOnModule(Module &M) {
         unsigned int src_line = addr_line.find((unsigned long)Pred)->second;
         unsigned int dst_line = addr_line.find((unsigned long)BBinfo)->second;
         errs() << "FLAG:" << branch_id << ":" << src_line << ":" << dst_line << ":" << M.getName() << "\n";
+        outfile << "FLAG:" << std::to_string(branch_id) << ":" << std::to_string(src_line) << ":" << std::to_string(dst_line) << ":" << std::string(M.getName()) << std::endl;
         //errs() << addr_line.find((unsigned long)Pred)->second << "\n";
       }
+  
 
       /*
       //BB.printAsOperand(errs(), false);
@@ -220,7 +221,9 @@ bool AFLCoverage::runOnModule(Module &M) {
       inst_blocks++;
 
     }
+  //outfile.close();
   }
+  outfile.close();
   /* Say something nice. */
 
   if (!be_quiet) {
