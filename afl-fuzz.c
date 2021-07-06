@@ -1089,7 +1089,9 @@ static inline u8 has_new_bits_2(u8* virgin_map) {
         }
         else{
           //printf("hit-count\n");
-          ret = 0; 
+          if(ret == 2){
+            ret = 2;
+          }else ret = 0; 
         }
         //else ret = 1;
 #else
@@ -2152,7 +2154,7 @@ EXP_ST void init_forkserver(char** argv) {
   int status;
   s32 rlen;
 
-  ACTF("Spinning up the fork server...");
+  //ACTF("Spinning up the fork server...");
 
   if (pipe(st_pipe) || pipe(ctl_pipe)) PFATAL("pipe() failed");
 
@@ -2293,7 +2295,7 @@ EXP_ST void init_forkserver(char** argv) {
      Otherwise, try to figure out what went wrong. */
 
   if (rlen == 4) {
-    OKF("All right - fork server is up.");
+    //OKF("All right - fork server is up.");
     return;
   }
 
@@ -2830,7 +2832,6 @@ static u8 calibrate_case(char** argv, struct queue_entry* q, u8* use_mem,
   /* If this case didn't result in new output from the instrumentation, tell
      parent. This is a non-critical problem, but something to warn the user
      about. */
-
   if (!dumb_mode && first_run && !fault && !new_bits) fault = FAULT_NOBITS;
 
 abort_calibration:
@@ -2982,7 +2983,6 @@ static u8 calibrate_case_2(char** argv, struct queue_entry* q, u8* use_mem,
   /* If this case didn't result in new output from the instrumentation, tell
      parent. This is a non-critical problem, but something to warn the user
      about. */
-
   if (!dumb_mode && first_run && !fault && !new_bits) fault = FAULT_NOBITS;
 
 abort_calibration:
@@ -3045,7 +3045,7 @@ static void perform_dry_run(char** argv, int dry_mode) {
     s32 fd;
 
     u8* fn = strrchr(q->fname, '/') + 1;
-    
+    printf("%s\n", fn);
     //ACTF("Attempting dry run with '%s'...", fn);
 
     fd = open(q->fname, O_RDONLY);
@@ -3209,7 +3209,7 @@ static void perform_dry_run(char** argv, int dry_mode) {
 */
         if (!in_bitmap && !shuffle_queue)
           //printf("%s:no-new-path\n", fn);
-          printf("%d:no-new-path\n", chain_index);
+          printf("%d:No-New-Branch\n", chain_index);
         break;
     }
 

@@ -135,7 +135,7 @@ bool AFLCoverage::runOnModule(Module &M) {
       /* Make up cur_loc */
 
       unsigned int cur_loc = AFL_R(MAP_SIZE);
-
+      //outfile << cur_loc << std::endl;
       ConstantInt *CurLoc = ConstantInt::get(Int32Ty, cur_loc);
     
       /* Get BB id and its cur_loc & print BBinfo*/
@@ -162,6 +162,7 @@ bool AFLCoverage::runOnModule(Module &M) {
         unsigned int dst_line = addr_line.find((unsigned long)BBinfo)->second;
         errs() << "FLAG:" << branch_id << ":" << src_line << ":" << dst_line << ":" << M.getName() << "\n";
         outfile << "FLAG:" << std::to_string(branch_id) << ":" << std::to_string(src_line) << ":" << std::to_string(dst_line) << ":" << std::string(M.getName()) << std::endl;
+        //outfile << "FLAG:" << std::to_string(branch_id) << ":" << addr_iv.find((unsigned long)Pred)->second << ":" << cur_loc << std::endl;
         //errs() << addr_line.find((unsigned long)Pred)->second << "\n";
       }
   
