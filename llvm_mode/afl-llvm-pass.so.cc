@@ -146,6 +146,7 @@ bool AFLCoverage::runOnModule(Module &M) {
       std::string filename;
       for(BasicBlock::iterator i = BBinfo->begin(), e = BBinfo->end(); i!=e; ++i){
         Instruction* ii = &*i;
+        //errs() << *ii << "\n";
         const DebugLoc &location = ii->getDebugLoc();
         if (location){
           if(max_line < location.getLine()){

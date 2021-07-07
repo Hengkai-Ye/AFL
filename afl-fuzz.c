@@ -437,7 +437,7 @@ static void bind_to_free_cpu(void) {
 
   }
 
-  ACTF("Checking CPU core loadout...");
+  //ACTF("Checking CPU core loadout...");
 
   /* Introduce some jitter, in case multiple AFL tasks are doing the same
      thing at the same time... */
@@ -520,7 +520,7 @@ static void bind_to_free_cpu(void) {
 
   }
 
-  OKF("Found a free CPU core, binding to #%u.", i);
+  //OKF("Found a free CPU core, binding to #%u.", i);
 
   cpu_aff = i;
 
@@ -1588,7 +1588,7 @@ static void read_testcases(void) {
   fn = alloc_printf("%s/queue", in_dir);
   if (!access(fn, F_OK)) in_dir = fn; else ck_free(fn);
 
-  ACTF("Scanning '%s'...", in_dir);
+  //ACTF("Scanning '%s'...", in_dir);
 
   /* We use scandir() + alphasort() rather than readdir() because otherwise,
      the ordering  of test cases would vary somewhat randomly and would be
@@ -2115,7 +2115,7 @@ static void load_auto(void) {
   }
 
   if (i) OKF("Loaded %u auto-discovered dictionary tokens.", i);
-  else OKF("No auto-generated dictionary tokens to reuse.");
+  //else OKF("No auto-generated dictionary tokens to reuse.");
 
 }
 
@@ -3278,7 +3278,7 @@ static void pivot_inputs(void) {
   struct queue_entry* q = queue;
   u32 id = 0;
 
-  ACTF("Creating hard links for all input files...");
+  //ACTF("Creating hard links for all input files...");
 
   while (q) {
 
@@ -4059,11 +4059,11 @@ static void maybe_delete_out_dir(void) {
 
   } else {
 
-    OKF("Output directory exists but deemed OK to reuse.");
+    //OKF("Output directory exists but deemed OK to reuse.");
 
   }
 
-  ACTF("Deleting old session data...");
+  //ACTF("Deleting old session data...");
 
   /* Okay, let's get the ball rolling! First, we need to get rid of the entries
      in <out_dir>/.synced/.../id:*, if any are present. */
@@ -4198,7 +4198,7 @@ static void maybe_delete_out_dir(void) {
   if (unlink(fn) && errno != ENOENT) goto dir_cleanup_failed;
   ck_free(fn);
 
-  OKF("Output dir cleanup successful.");
+  //OKF("Output dir cleanup successful.");
 
   /* Wow... is that all? If yes, celebrate! */
 
@@ -7170,7 +7170,7 @@ EXP_ST void check_binary(u8* fname) {
   u8* f_data;
   u32 f_len = 0;
 
-  ACTF("Validating target binary...");
+  //ACTF("Validating target binary...");
 
   if (strchr(fname, '/') || !(env_path = getenv("PATH"))) {
 
@@ -7371,7 +7371,7 @@ static void check_if_tty(void) {
   if (ioctl(1, TIOCGWINSZ, &ws)) {
 
     if (errno == ENOTTY) {
-      OKF("Looks like we're not running on a tty, so I'll be a bit less verbose.");
+      //OKF("Looks like we're not running on a tty, so I'll be a bit less verbose.");
       not_on_tty = 1;
     }
 
@@ -7446,7 +7446,7 @@ EXP_ST void setup_dirs_fds(void) {
   u8* tmp;
   s32 fd;
 
-  ACTF("Setting up output directories...");
+  //ACTF("Setting up output directories...");
 
   if (sync_id && mkdir(sync_dir, 0700) && errno != EEXIST)
       PFATAL("Unable to create '%s'", sync_dir);
@@ -7618,7 +7618,7 @@ static void check_crash_handling(void) {
 
   if (fd < 0) return;
 
-  ACTF("Checking core_pattern...");
+  //ACTF("Checking core_pattern...");
 
   if (read(fd, &fchar, 1) == 1 && fchar == '|') {
 
@@ -7760,9 +7760,9 @@ static void get_core_count(void) {
 
 #endif /* __APPLE__ || __FreeBSD__ || __OpenBSD__ */
 
-    OKF("You have %u CPU core%s and %u runnable tasks (utilization: %0.0f%%).",
-        cpu_core_count, cpu_core_count > 1 ? "s" : "",
-        cur_runnable, cur_runnable * 100.0 / cpu_core_count);
+    //OKF("You have %u CPU core%s and %u runnable tasks (utilization: %0.0f%%).",
+    //    cpu_core_count, cpu_core_count > 1 ? "s" : "",
+    //    cur_runnable, cur_runnable * 100.0 / cpu_core_count);
 
     if (cpu_core_count > 1) {
 
@@ -7772,7 +7772,7 @@ static void get_core_count(void) {
 
       } else if (cur_runnable + 1 <= cpu_core_count) {
 
-        OKF("Try parallel jobs - see %s/parallel_fuzzing.txt.", doc_path);
+        //OKF("Try parallel jobs - see %s/parallel_fuzzing.txt.", doc_path);
   
       }
 
@@ -8078,7 +8078,7 @@ int main(int argc, char** argv) {
   struct timeval tv;
   struct timezone tz;
 
-  SAYF(cCYA "afl-fuzz " cBRI VERSION cRST " by <lcamtuf@google.com>\n");
+  //SAYF(cCYA "afl-fuzz " cBRI VERSION cRST " by <lcamtuf@google.com>\n");
 
   doc_path = access(DOC_PATH, F_OK) ? "docs" : DOC_PATH;
 

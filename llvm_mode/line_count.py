@@ -18,5 +18,4 @@ for line in cxx_file:
             hit_list.append(id)
 print(hit)
 print(total)
-print(hit_list)
 
