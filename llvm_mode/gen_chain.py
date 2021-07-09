@@ -2,11 +2,11 @@ import os
 import shutil
 #q_path = "/home/hengkai/Desktop/libming-CVE-2018-8807/install/queue/"
 #c_path = "/home/hengkai/Desktop/libming-CVE-2018-8807/install/chain/"
-q_path = "/home/hengkai/Desktop/coreutils-8.32/install/queue2/"
-c_path = "/home/hengkai/Desktop/coreutils-8.32/install/chain2/"
+q_path = "/home/hengkai/Desktop/file-FILE5_32/install/output/queue/"
+c_path = "/home/hengkai/Desktop/file-FILE5_32/install/chain/"
 def main():
     chain_id = 1
-    q_list = [0] * 400
+    q_list = [0] * 777
     q_files = os.listdir(q_path)
     q_files.sort()
     max_id = len(q_files) - 1
@@ -25,5 +25,12 @@ def main():
                 src = int(q_files[src + 1][14:20])
             shutil.copyfile(q_path + q_files[1], chain_path + q_files[1])
             chain_id += 1
+    '''
+    id_folder = os.listdir(c_path)
+    id_folder.sort()
+    for id in id_folder:
+        c_file = os.listdir(c_path + id + '/')
+        print(id,len(c_file))
+    '''
 if __name__ == '__main__':
     main()

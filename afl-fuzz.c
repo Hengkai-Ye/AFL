@@ -1019,10 +1019,10 @@ static inline u8 has_new_bits_2(u8* virgin_map) {
 
 #ifdef WORD_SIZE_64
 
-  u64* current = (u64*)trace_bits;
-  u64* virgin  = (u64*)virgin_map;
+  u8* current = (u8*)trace_bits;
+  u8* virgin  = (u8*)virgin_map;
 
-  u32  i = (MAP_SIZE >> 3);
+  u32  i = MAP_SIZE;
 
 #else
 
@@ -1042,7 +1042,7 @@ static inline u8 has_new_bits_2(u8* virgin_map) {
 
     if (unlikely(*current) && unlikely(*current & *virgin)) {
 
-      if(i > 0) {
+      if(i >= 0) {
         u8* cur = (u8*)current;
         u8* vir = (u8*)virgin;
 
@@ -1050,48 +1050,20 @@ static inline u8 has_new_bits_2(u8* virgin_map) {
            bytes in current[] are pristine in virgin[]. */
 
 #ifdef WORD_SIZE_64
-        if ((cur[0] && vir[0] == 0xff) || (cur[1] && vir[1] == 0xff) ||
-            (cur[2] && vir[2] == 0xff) || (cur[3] && vir[3] == 0xff) ||
-            (cur[4] && vir[4] == 0xff) || (cur[5] && vir[5] == 0xff) ||
-            (cur[6] && vir[6] == 0xff) || (cur[7] && vir[7] == 0xff)) {
-          if(cur[0] && vir[0] == 0xff){
-            printf("%d:NB\n", 65536 - i*8 - 8);
-            ret = 2;
-          }
-          else if(cur[1] && vir[1] == 0xff){
-            printf("%d:NB\n", 65536 - i*8 + 1 - 8);
-            ret = 2;
-          }
-          else if(cur[2] && vir[2] == 0xff){
-            printf("%d:NB\n", 65536 - i*8 + 2 - 8);
-            ret = 2;
-          }
-          else if(cur[3] && vir[3] == 0xff){
-            printf("%d:NB\n", 65536 - i*8 + 3 - 8);
-            ret = 2;
-          }
-          else if(cur[4] && vir[4] == 0xff){
-            printf("%d:NB\n", 65536 - i*8 + 4 - 8);
-            ret = 2;
-          }
-          else if(cur[5] && vir[5] == 0xff){
-            printf("%d:NB\n", 65536 - i*8 + 5 - 8);
-            ret = 2;
-          }
-          else if(cur[6] && vir[6] == 0xff){
-            printf("%d:NB\n", 65536 - i*8 + 6 - 8);
-            ret = 2;
-          }
-          else if(cur[7] && vir[7] == 0xff){
-            printf("%d:NB\n", 65536 - i*8 + 7 - 8);
-            ret = 2;
-          }              
+        if(cur[0] && vir[0] == 0xff){
+          printf("%d:NB\n", 65536 - i - 1);
+          ret = 2;
         }
         else{
-          //printf("hit-count\n");
-          if(ret == 2){
+          if(ret == 2)
+          {
             ret = 2;
-          }else ret = 0; 
+          }
+          else
+          {
+            printf("%d:HC\n", 65536 - i - 1);
+            ret = 1;
+          }
         }
         //else ret = 1;
 #else
