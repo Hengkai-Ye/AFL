@@ -1,7 +1,7 @@
 import os
 
-log_path = "/home/hengkai/Desktop/AFL/llvm_mode/trace/trace-file-o0.log"
-cxx_path = "/home/hengkai/Desktop/file-FILE5_32/install/install-o0/file.log"
+log_path = "/home/hengkai/Desktop/AFL/llvm_mode/trace/file-o3.log"
+cxx_path = "/home/hengkai/Desktop/file-FILE5_32/install/o3/fuzz/file-o3.log"
 total = 0
 hit = 0
 log_list = []
@@ -10,7 +10,7 @@ hit_list = []
 for line in log_file:
     log_list.append(line.split(":")[1])
 cxx_file = open(cxx_path, "r")
-'''
+
 for line in cxx_file:
     if(line.split(":")[1] == "NB\n"):
         total += 1
@@ -20,6 +20,8 @@ for line in cxx_file:
             hit_list.append(id)
 print(hit)
 print(total)
+
+
 '''
 flag = 1
 while 1:
@@ -37,6 +39,6 @@ while 1:
         id = line.split(":")[0]
         if id in log_list:
             flag = 1
-
+'''
 print(hit)
-print(total - 9)
+print(total)

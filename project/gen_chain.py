@@ -2,13 +2,14 @@ import os
 import shutil
 #q_path = "/home/hengkai/Desktop/libming-CVE-2018-8807/install/queue/"
 #c_path = "/home/hengkai/Desktop/libming-CVE-2018-8807/install/chain/"
-q_path = "/home/hengkai/Desktop/file-FILE5_32/install/output/queue/"
-c_path = "/home/hengkai/Desktop/file-FILE5_32/install/chain/"
+q_path = "/home/hengkai/Desktop/file-FILE5_32/install/o3/fuzz/output/queue/"
+c_path = "/home/hengkai/Desktop/file-FILE5_32/install/o3/fuzz/chain/"
 def main():
     chain_id = 1
-    q_list = [0] * 777
     q_files = os.listdir(q_path)
     q_files.sort()
+    print(len(q_files))
+    q_list = [0] * len(q_files)
     max_id = len(q_files) - 1
     for i in range(max_id,1,-1): 
         if(q_list[i] != 1):

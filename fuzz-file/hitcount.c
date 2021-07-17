@@ -10,6 +10,8 @@ int main(int argc, char *argv[]){
     for(i = 0; i < magicbytes; i++){
         if(j == 10){
             printf("aaaa");
+        }else{
+            printf("bbbbb");
         }
     }
     return 0;
