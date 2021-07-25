@@ -201,12 +201,12 @@ bool AFLCoverage::runOnModule(Module &M) {
       StoreInst *Store =
           IRB.CreateStore(ConstantInt::get(Int32Ty, cur_loc >> 1), AFLPrevLoc);
       Store->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
-
+    /*
       for (BasicBlock::iterator i = BBinfo->begin(), e = BBinfo->end(); i!=e; i++){
         Instruction* ii = &*i;
         errs() << *ii << "\n";
       }
-
+    */
       inst_blocks++;
 
     }

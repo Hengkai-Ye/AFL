@@ -1,7 +1,7 @@
 import os
 import re
-c_path = "/home/hengkai/Desktop/file-FILE5_32/install/o3/fuzz/chain/"
-log_path = "/home/hengkai/Desktop/file-FILE5_32/install/o0/fuzz/file-o3.log"
+c_path = "/home/hengkai/Desktop/program/jhead-2.97/0s/chain/"
+log_path = "/home/hengkai/Desktop/program/jhead-2.97/3s/pdr0s.log"
 
 def main():
     target_id = []

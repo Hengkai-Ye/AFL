@@ -2,8 +2,8 @@ import os
 import shutil
 #q_path = "/home/hengkai/Desktop/libming-CVE-2018-8807/install/queue/"
 #c_path = "/home/hengkai/Desktop/libming-CVE-2018-8807/install/chain/"
-q_path = "/home/hengkai/Desktop/file-FILE5_32/install/o3/fuzz/output/queue/"
-c_path = "/home/hengkai/Desktop/file-FILE5_32/install/o3/fuzz/chain/"
+q_path = "/home/hengkai/Desktop/program/jhead-2.97/0s/output/queue/"
+c_path = "/home/hengkai/Desktop/program/jhead-2.97/0s/chain/"
 def main():
     chain_id = 1
     q_files = os.listdir(q_path)

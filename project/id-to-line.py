@@ -1,6 +1,6 @@
-logo0_path = "/home/hengkai/Desktop/file-FILE5_32/install/o3/fuzz/file-o3.log"
-logo3_path = "/home/hengkai/Desktop/file-FILE5_32/install/o0/fuzz/file-o3.log"
-logtrace_path = "/home/hengkai/Desktop/AFL/llvm_mode/trace/file-o3.log"
+logo0_path = "/home/hengkai/Desktop/file-FILE5_32/install/3/pdr3.log"
+logo3_path = "/home/hengkai/Desktop/file-FILE5_32/install/0/pdr3.log"
+logtrace_path = "/home/hengkai/Desktop/AFL/llvm_mode/trace/t3.log"
 id_list = []
 branch_list = []
 line_list = []
