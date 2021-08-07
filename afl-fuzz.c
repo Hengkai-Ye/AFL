@@ -2086,7 +2086,7 @@ static void load_auto(void) {
 
   }
 
-  if (i) OKF("Loaded %u auto-discovered dictionary tokens.", i);
+  //if (i) OKF("Loaded %u auto-discovered dictionary tokens.", i);
   //else OKF("No auto-generated dictionary tokens to reuse.");
 
 }
@@ -2997,7 +2997,7 @@ static void check_map_coverage(void) {
   for (i = (1 << (MAP_SIZE_POW2 - 1)); i < MAP_SIZE; i++)
     if (trace_bits[i]) return;
 
-  WARNF("Recompile binary with newer version of afl to improve coverage!");
+  //WARNF("Recompile binary with newer version of afl to improve coverage!");
 
 }
 

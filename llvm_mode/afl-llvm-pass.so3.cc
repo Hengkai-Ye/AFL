@@ -78,11 +78,7 @@ bool AFLCoverage::runOnModule(Module &M) {
   GlobalVariable *AFLMapPtr =
       new GlobalVariable(M, PointerType::get(Int8Ty, 0), false,
                          GlobalValue::ExternalLinkage, 0, "__afl_area_ptr");
-  /*
-  GlobalVariable *IDCounter = 
-      new GlobalVariable(M, Type::getInt32Ty(C), false, 
-                        GlobalValue::PrivateLinkage, 0, "BranchID");   
-  */
+  
   unsigned int Counter = 0;
 
   char buf[10];
@@ -98,16 +94,49 @@ bool AFLCoverage::runOnModule(Module &M) {
   std::map<unsigned long, unsigned int> addr_dst;
   std::ofstream outfile;
   outfile.open("/home/hengkai/Desktop/AFL/llvm_mode/trace.log", std::ios::app);
-
+  int inst_blocks = 0;
+  int inst_select = 0;
   for (auto &F : M){
     for (auto &BB : F){
       /* Get BB info*/
       unsigned int start_line = 0;
       unsigned int end_line = 0;
       unsigned int flag = 1;
+      unsigned int select_flag = 0;
       BasicBlock* BBinfo = &BB;
+         
       for(BasicBlock::iterator i = BBinfo->begin(), e = BBinfo->end(); i!=e; ++i){
         Instruction* ii = &*i;
+
+        if(ii->getOpcode() == Instruction :: Select){
+            i++;
+            Instruction* ii_select = &*i;
+            IRBuilder<> IRB(&(*ii_select));
+            ConstantInt *SelectCounter1 = ConstantInt::get(Int32Ty, Counter);
+            Counter++;
+            ConstantInt *SelectCounter2 = ConstantInt::get(Int32Ty, Counter);
+            Counter++;
+            Value* SelectReceive =  IRB.CreateSelect(ii->getOperand(0), SelectCounter1, SelectCounter2);
+            /* Load SHM pointer */
+            LoadInst *MapPtr = IRB.CreateLoad(AFLMapPtr);
+            MapPtr->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
+            Value *MapPtrIdx =
+            IRB.CreateGEP(MapPtr, SelectReceive);
+
+            /* Update bitmap*/
+            LoadInst *Counter = IRB.CreateLoad(MapPtrIdx);
+            Counter->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
+            Value *Incr = IRB.CreateAdd(Counter, ConstantInt::get(Int8Ty, 1));
+        
+            IRB.CreateStore(Incr, MapPtrIdx)
+                ->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
+            
+            inst_select++;
+            inst_blocks++;           
+        }
+        
+
+
         const DebugLoc &location = ii->getDebugLoc();
         if (location){
           //errs() << location.getLine() << "\n";
@@ -129,7 +158,7 @@ bool AFLCoverage::runOnModule(Module &M) {
 
 
   /* Instrument all the things! */
-  int inst_blocks = 0;
+  
   for (auto &F : M){
     for (auto &BB : F){
 
@@ -159,11 +188,13 @@ bool AFLCoverage::runOnModule(Module &M) {
           unsigned int dst_line = addr_dst.find((unsigned long)BBinfo)->second;
           errs() << "----" << src_line << ":" << dst_line << "\n";
           errs() << Pred << "\n";
-          outfile << "FLAG:" << std::to_string(Counter) << ":" << std::to_string(src_line) << ":" << std::to_string(dst_line) << ":" << std::string(M.getName()) << std::endl;
+          outfile << "FLAG:" << std::to_string(Counter) << ":" << std::to_string(src_line) \
+            << ":" << std::to_string(dst_line) << ":" << std::string(M.getName()) << std::endl;
           Counter++;
         }
 
         Receive = phi;
+
         /* Load SHM pointer */
         LoadInst *MapPtr = IRB.CreateLoad(AFLMapPtr);
         MapPtr->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
@@ -174,16 +205,19 @@ bool AFLCoverage::runOnModule(Module &M) {
         LoadInst *Counter = IRB.CreateLoad(MapPtrIdx);
         Counter->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
         Value *Incr = IRB.CreateAdd(Counter, ConstantInt::get(Int8Ty, 1));
+        
         IRB.CreateStore(Incr, MapPtrIdx)
             ->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
                       
         inst_blocks++;
 
       }
+      
       for (BasicBlock::iterator i = BBinfo->begin(), e = BBinfo->end(); i!=e; i++){
           Instruction* ii = &*i;
           errs() << *ii << "\n";
         }
+        
     }
   }
   outfile2 << std::to_string(Counter) << "\n";

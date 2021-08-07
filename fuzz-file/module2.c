@@ -8,10 +8,12 @@ int main(int argc, char *argv[]){
     scanf("%x", &magicbytes);
     if(magicbytes >> 24 == 0xde){
         if((magicbytes & 0xff0000) >> 16 == 0xad){
-            if(magicbytes == 0xdeadbeef){
-                printf("got it\n");
-                //strcpy(buffer, argv[1]);
-                return 1;
+            if((magicbytes & 0xff00) >> 8 == 0xbe){
+                if((magicbytes & 0xff) == 0xef){
+                    printf("got it\n");
+                    //strcpy(buffer, argv[1]);
+                    return 1;
+                }
             }
         }
     }

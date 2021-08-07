@@ -9,9 +9,12 @@ int main(int argc, char *argv[]){
     int test = magicbytes;
 
     int test2 = test > 10 ? 0 : 1;
-
-    if(test2)
-        printf("%d\n", test2);
+    int test3 = test;
+    if(test2){
+        //printf("%d\n", test2);
+        if(test3 > 8 || test3 < 6)
+            return 1;
+    }
 
     return 0;
 }

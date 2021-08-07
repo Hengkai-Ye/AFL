@@ -117,7 +117,7 @@ def main():
     parser.add_argument('-pdr2', type=str, help='pdr path for the tested program')
     parser.add_argument('-inst', type=str, help='instrument path for the fuzzed program')
     args = parser.parse_args()
-    shutil.rmtree(args.chain)
+    #shutil.rmtree(args.chain)
     os.mkdir(args.chain)
     target_chain = {}
     gen_chain(args.chain, args.queue)
