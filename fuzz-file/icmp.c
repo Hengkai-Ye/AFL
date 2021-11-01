@@ -5,10 +5,9 @@
 int main(){
 	int s;
 	scanf("%x", &s);
-	int test;
-	int v=1;
-	int p=2;
-	test = TEST(s, v, p);
-	return test;
+	if(s > 5 || s < 3 || s == 4){
+		s++;
+	}
+	return s;
 }
 

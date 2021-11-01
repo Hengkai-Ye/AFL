@@ -1,0 +1,13 @@
+  %1 = alloca i32, align 4
+  %2 = bitcast i32* %1 to i8*, !dbg !16
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %2) #4, !dbg !16
+  call void @llvm.dbg.declare(metadata i32* %1, metadata !12, metadata !DIExpression()), !dbg !17
+  %3 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32* %1), !dbg !18
+  call void @llvm.dbg.value(metadata i32 1, metadata !14, metadata !DIExpression()), !dbg !19
+  call void @llvm.dbg.value(metadata i32 2, metadata !15, metadata !DIExpression()), !dbg !19
+  %4 = load i32, i32* %1, align 4, !dbg !20, !tbaa !21
+  %5 = icmp ne i32 %4, 0, !dbg !20
+  %6 = select i1 %5, i32 1, i32 2, !dbg !20
+  call void @llvm.dbg.value(metadata i32 %6, metadata !13, metadata !DIExpression()), !dbg !19
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %2) #4, !dbg !25
+  ret i32 %6, !dbg !26

@@ -81,15 +81,6 @@ bool AFLCoverage::runOnModule(Module &M) {
   
   unsigned int Counter = 0;
 
-  char buf[10];
-  std::fstream infile;
-  std::ofstream outfile2;
-  infile.open("/home/hengkai/Desktop/AFL/llvm_mode/counter.log", std::ios::out | std::ios::in);
-  infile >> buf;
-  infile.close();
-  outfile2.open("/home/hengkai/Desktop/AFL/llvm_mode/counter.log", std::ios::out);
-  Counter = std::stoi(buf);
-
   std::map<unsigned long, unsigned int> addr_src; // <addr of BB, line of BB>
   std::map<unsigned long, unsigned int> addr_dst;
   std::ofstream outfile;
@@ -228,9 +219,8 @@ bool AFLCoverage::runOnModule(Module &M) {
         
     }
   }
-  outfile2 << std::to_string(Counter) << "\n";
+  
   outfile.close();
-  outfile2.close();
 
   if (!be_quiet) {
 

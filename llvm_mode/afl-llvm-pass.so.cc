@@ -18,7 +18,7 @@
 #include "llvm/Support/Debug.h"
 #include "llvm/Transforms/IPO/PassManagerBuilder.h"
 #include "llvm/Support/raw_ostream.h"
-
+#include "llvm/IR/DebugInfoMetadata.h"
 using namespace llvm;
 
 namespace {
@@ -85,15 +85,6 @@ bool AFLCoverage::runOnModule(Module &M) {
   */
   unsigned int Counter = 0;
 
-  char buf[10];
-  std::fstream infile;
-  std::ofstream outfile2;
-  infile.open("/home/hengkai/Desktop/AFL/llvm_mode/counter.log", std::ios::out | std::ios::in);
-  infile >> buf;
-  infile.close();
-  outfile2.open("/home/hengkai/Desktop/AFL/llvm_mode/counter.log", std::ios::out);
-  Counter = std::stoi(buf);
-
   std::map<unsigned long, unsigned int> addr_src; // <addr of BB, line of BB>
   std::map<unsigned long, unsigned int> addr_dst;
   std::ofstream outfile;
@@ -108,9 +99,8 @@ bool AFLCoverage::runOnModule(Module &M) {
       BasicBlock* BBinfo = &BB;
       for(BasicBlock::iterator i = BBinfo->begin(), e = BBinfo->end(); i!=e; ++i){
         Instruction* ii = &*i;
-        const DebugLoc &location = ii->getDebugLoc();
+        const DebugLoc &location = ii->getDebugLoc();      
         if (location){
-          //errs() << location.getLine() << "\n";
           if(flag){
             start_line = location.getLine();
             if(start_line != 0){
@@ -135,16 +125,26 @@ bool AFLCoverage::runOnModule(Module &M) {
 
       BasicBlock::iterator IP = BB.getFirstInsertionPt();
       IRBuilder<> IRB(&(*IP));
+      //get filename
+      std::string fileName;
+      BasicBlock* BBinfo = &BB;
+      for(BasicBlock::iterator i = BBinfo->begin(), e = BBinfo->end(); i!=e; ++i){
+        Instruction* ii = &*i;
+        const DebugLoc &location = ii->getDebugLoc(); 
+        if(location){
+          auto *Scope = cast<DIScope>(location.getScope());
+          fileName = Scope->getFilename();
+          break;
+        }
+      }
 
       if (AFL_R(100) >= inst_ratio) continue;
 
       Value *Receive;
-      BasicBlock* BBinfo = &BB;
-      std::string filename;
 
-      unsigned int a = addr_dst.find((unsigned long)BBinfo)->second;
-      unsigned int b = addr_src.find((unsigned long)BBinfo)->second;
-      errs() << a << ":" << b << "\n";
+      //unsigned int a = addr_dst.find((unsigned long)BBinfo)->second;
+      //unsigned int b = addr_src.find((unsigned long)BBinfo)->second;
+      //errs() << a << ":" << b << "\n";
 
       /* Instrument a ID for each BB */
       if(pred_size(BBinfo)){
@@ -157,9 +157,10 @@ bool AFLCoverage::runOnModule(Module &M) {
           phi->addIncoming(IDCounter, Pred);
           unsigned int src_line = addr_src.find((unsigned long)Pred)->second;
           unsigned int dst_line = addr_dst.find((unsigned long)BBinfo)->second;
-          errs() << "----" << src_line << ":" << dst_line << "\n";
-          errs() << Pred << "\n";
-          outfile << "FLAG:" << std::to_string(Counter) << ":" << std::to_string(src_line) << ":" << std::to_string(dst_line) << ":" << std::string(M.getName()) << std::endl;
+          //errs() << "----" << src_line << ":" << dst_line << "\n";
+          //errs() << Pred << "\n";
+          
+          outfile << "FLAG:" << std::to_string(Counter) << ":" << std::to_string(src_line) << ":" << std::to_string(dst_line) << ":" << std::string(fileName) << std::endl;
           Counter++;
         }
 
@@ -180,15 +181,17 @@ bool AFLCoverage::runOnModule(Module &M) {
         inst_blocks++;
 
       }
+      
       for (BasicBlock::iterator i = BBinfo->begin(), e = BBinfo->end(); i!=e; i++){
           Instruction* ii = &*i;
           errs() << *ii << "\n";
         }
+      
     }
   }
-  outfile2 << std::to_string(Counter) << "\n";
+  
   outfile.close();
-  outfile2.close();
+
 
   if (!be_quiet) {
 

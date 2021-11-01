@@ -1,0 +1,30 @@
+  %1 = alloca i32, align 4
+  %2 = bitcast i32* %1 to i8*, !dbg !13
+  call void @llvm.lifetime.start.p0i8(i64 4, i8* %2) #4, !dbg !13
+  call void @llvm.dbg.declare(metadata i32* %1, metadata !12, metadata !DIExpression()), !dbg !14
+  %3 = call i32 (i8*, ...) @__isoc99_scanf(i8* getelementptr inbounds ([3 x i8], [3 x i8]* @.str, i64 0, i64 0), i32* %1), !dbg !15
+  %4 = load i32, i32* %1, align 4, !dbg !16, !tbaa !18
+  %5 = icmp sgt i32 %4, 5, !dbg !22
+  %6 = icmp slt i32 %4, 3, !dbg !23
+  %7 = or i1 %5, %6, !dbg !24
+  %8 = icmp eq i32 %4, 4, !dbg !25
+  %9 = or i1 %7, %8, !dbg !24
+  br i1 %9, label %10, label %12, !dbg !24
+  %11 = phi i32 [ 0, %0 ], !dbg !26
+  %12 = load i8*, i8** @__afl_area_ptr, !dbg !26, !nosanitize !2
+  %13 = getelementptr i8, i8* %12, i32 %11, !dbg !26
+  %14 = load i8, i8* %13, !dbg !26, !nosanitize !2
+  %15 = add i8 %14, 1, !dbg !26
+  store i8 %15, i8* %13, !dbg !26, !nosanitize !2
+  %16 = add nsw i32 %4, 1, !dbg !26
+  store i32 %16, i32* %1, align 4, !dbg !26, !tbaa !18
+  br label %17, !dbg !28
+  %18 = phi i32 [ 1, %0 ], [ 2, %10 ], !dbg !29
+  %19 = load i8*, i8** @__afl_area_ptr, !dbg !29, !nosanitize !2
+  %20 = getelementptr i8, i8* %19, i32 %18, !dbg !29
+  %21 = load i8, i8* %20, !dbg !29, !nosanitize !2
+  %22 = add i8 %21, 1, !dbg !29
+  store i8 %22, i8* %20, !dbg !29, !nosanitize !2
+  %23 = load i32, i32* %1, align 4, !dbg !29, !tbaa !18
+  call void @llvm.lifetime.end.p0i8(i64 4, i8* %2) #4, !dbg !30
+  ret i32 %23, !dbg !31

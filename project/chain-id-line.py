@@ -57,6 +57,7 @@ def get_source(pdr1_path, inst_path, chain_path, target_chain):
     branch_dict = {}
     code_dict = {}
     total_id_list = []
+    trim_id_list = []
     pdr1_file = open(pdr1_path, "r")
     inst_file = open(inst_path, "r")
     for key in sorted(target_chain.keys()):
@@ -68,11 +69,14 @@ def get_source(pdr1_path, inst_path, chain_path, target_chain):
                 chain_id_list.append(c_files[i][:9])
                 total_id_list.append(c_files[i][:9])
                 id_dict[key] = chain_id_list
-    total_id_list.sort()
+    trim_id_list =  list(set(total_id_list))
+    trim_id_list.sort()
+    print(total_id_list)
+    print(trim_id_list)
     count = 0
     while 1:
         line = pdr1_file.readline()
-        target_str = total_id_list[count]
+        target_str = trim_id_list[count]
         if not line:
             break
         if target_str in line:
@@ -84,11 +88,11 @@ def get_source(pdr1_path, inst_path, chain_path, target_chain):
                 last_line = pdr1_file.tell()
                 line = pdr1_file.readline()
 
-            branch_dict[total_id_list[count]] = branch_list
+            branch_dict[trim_id_list[count]] = branch_list
 
-            if count < len(total_id_list) - 1:
+            if count < len(trim_id_list) - 1:
                 count += 1
-                if(int(total_id_list[count].split(":")[1]) == (int(total_id_list[count - 1].split(":")[1]) + 1)):
+                if(int(trim_id_list[count].split(":")[1]) == (int(trim_id_list[count - 1].split(":")[1]) + 1)):
                     pdr1_file.seek(last_line)
 
     for key in sorted(id_dict.keys()):
@@ -106,6 +110,8 @@ def get_source(pdr1_path, inst_path, chain_path, target_chain):
         code_dict[key] = code_list
 
     for key in sorted(code_dict.keys()):
+        if int(key.split(":")[1]) == int(code_dict[key][0].split(":")[0]):
+            continue
         print(key, code_dict[key])
 
     
@@ -117,7 +123,7 @@ def main():
     parser.add_argument('-pdr2', type=str, help='pdr path for the tested program')
     parser.add_argument('-inst', type=str, help='instrument path for the fuzzed program')
     args = parser.parse_args()
-    #shutil.rmtree(args.chain)
+    shutil.rmtree(args.chain)
     os.mkdir(args.chain)
     target_chain = {}
     gen_chain(args.chain, args.queue)

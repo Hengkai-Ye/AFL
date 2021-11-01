@@ -95,79 +95,75 @@ bool AFLCoverage::runOnModule(Module &M) {
   std::ofstream outfile;
   outfile.open("/home/hengkai/Desktop/AFL/llvm_mode/trace.log", std::ios::app);
   int inst_blocks = 0;
-  int inst_select = 0;
+  int inst_icmp = 0;
   for (auto &F : M){
     for (auto &BB : F){
       /* Get BB info*/
       unsigned int start_line = 0;
       unsigned int end_line = 0;
       unsigned int flag = 1;
-      //unsigned int select_flag = 0;
       BasicBlock* BBinfo = &BB;
-      Value* BrReceive; 
-      Value* SelectReceive;
-
+      Value* BrReceive;
+      Value* IcmpReceive;
+      
       for(BasicBlock::iterator i = BBinfo->begin(), e = BBinfo->end(); i!=e; ++i){
-        Instruction* ii = &*i;
-        if(ii->getOpcode() == Instruction::Br){
-          BrReceive = ii->getOperand(0);
-        }
+          Instruction* ii = &*i;
+          if(ii->getOpcode() == Instruction::Br){
+              BrReceive = ii->getOperand(0);
+          }
       }
-
       for(BasicBlock::iterator i = BBinfo->begin(), e = BBinfo->end(); i!=e; ++i){
-        Instruction* ii = &*i;
-        if(ii->getOpcode() == Instruction :: Select){
-          SelectReceive = ii;
-          if(SelectReceive != BrReceive){
-            i++;
-            Instruction* ii_select = &*i;
-            IRBuilder<> IRB(&(*ii_select));
-            ConstantInt *SelectCounter1 = ConstantInt::get(Int32Ty, Counter);
-            Counter++;
-            ConstantInt *SelectCounter2 = ConstantInt::get(Int32Ty, Counter);
-            Counter++;
-            Value* SelectReceive =  IRB.CreateSelect(ii->getOperand(0), SelectCounter1, SelectCounter2);
-            /* Load SHM pointer */
-            LoadInst *MapPtr = IRB.CreateLoad(AFLMapPtr);
-            MapPtr->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
-            Value *MapPtrIdx =
-            IRB.CreateGEP(MapPtr, SelectReceive);
+          Instruction* ii = &*i;
+          if(ii->getOpcode() == Instruction::ICmp){
+              IcmpReceive = ii;
+              if(IcmpReceive != BrReceive){
+                  i++;
+                  Instruction* ii_select = &*i;
+                  IRBuilder<> IRB(&(*ii_select));
+                  ConstantInt *SelectCounter1 = ConstantInt::get(Int32Ty, Counter);
+                  Counter++;
+                  ConstantInt *SelectCounter2 = ConstantInt::get(Int32Ty, Counter);
+                  Counter++;
+                  Value* SelectReceive =  IRB.CreateSelect(IcmpReceive, SelectCounter1, SelectCounter2);
+                  
+                  /* Load SHM pointer */
+                  LoadInst *MapPtr = IRB.CreateLoad(AFLMapPtr);
+                  MapPtr->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
+                  Value *MapPtrIdx =
+                  IRB.CreateGEP(MapPtr, SelectReceive);
 
-            /* Update bitmap*/
-            LoadInst *Counter = IRB.CreateLoad(MapPtrIdx);
-            Counter->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
-            Value *Incr = IRB.CreateAdd(Counter, ConstantInt::get(Int8Ty, 1));
-        
-            IRB.CreateStore(Incr, MapPtrIdx)
-                ->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
+                  /* Update bitmap*/
+                  LoadInst *Counter = IRB.CreateLoad(MapPtrIdx);
+                  Counter->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
+                  Value *Incr = IRB.CreateAdd(Counter, ConstantInt::get(Int8Ty, 1));
             
-            inst_select++;
-            inst_blocks++;
-            i--;
-          }           
-        }
+                  IRB.CreateStore(Incr, MapPtrIdx)
+                      ->setMetadata(M.getMDKindID("nosanitize"), MDNode::get(C, None));
+                
+                  inst_icmp++;
+                  inst_blocks++;
+                  i--;    
+              }
+          }
         
-
-
-        const DebugLoc &location = ii->getDebugLoc();
-        if (location){
-          //errs() << location.getLine() << "\n";
-          if(flag){
-            start_line = location.getLine();
-            if(start_line != 0){
-              flag = 0;
+          const DebugLoc &location = ii->getDebugLoc();
+          if (location){
+            //errs() << location.getLine() << "\n";
+            if(flag){
+              start_line = location.getLine();
+              if(start_line != 0){
+                flag = 0;
+              }
             }
-          }
-          if(end_line < location.getLine()){
-            end_line = location.getLine();
-          }
-        }     
-      }
-      addr_dst.insert(std::make_pair((unsigned long)&BB, start_line));
-      addr_src.insert(std::make_pair((unsigned long)&BB, end_line));   
+            if(end_line < location.getLine()){
+              end_line = location.getLine();
+            }
+          }     
+        }
+        addr_dst.insert(std::make_pair((unsigned long)&BB, start_line));
+        addr_src.insert(std::make_pair((unsigned long)&BB, end_line));   
     }
   }
-
 
   /* Instrument all the things! */
   
